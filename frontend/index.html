@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decima Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Titlebar drag region (macOS) -->
+    <div id="titlebar"></div>
+
+    <div id="main-layout">
+      <!-- Sidebar -->
+      <aside id="sidebar"></aside>
+
+      <!-- Main content area -->
+      <main id="content">
+        <!-- Toolbar -->
+        <div id="toolbar">
+          <div id="breadcrumb"></div>
+          <div id="toolbar-actions">
+            <div id="view-switcher"></div>
+            <div id="filter-pills"></div>
+          </div>
+        </div>
+
+        <!-- File browser area -->
+        <div id="browser"></div>
+
+        <!-- Status bar -->
+        <div id="statusbar"></div>
+      </main>
+
+      <!-- Preview panel -->
+      <aside id="preview-panel"></aside>
+    </div>
+
+    <!-- Search overlay -->
+    <div id="search-overlay" aria-hidden="true"></div>
+
+    <!-- Context menu -->
+    <div id="context-menu" class="hidden"></div>
+
+    <!-- Shortcuts overlay -->
+    <div id="shortcuts-overlay" aria-hidden="true"></div>
+
+    <!-- Scan progress toast -->
+    <div id="scan-toast" class="hidden"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

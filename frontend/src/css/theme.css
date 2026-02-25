@@ -1,0 +1,108 @@
+/* Decima Explorer — Design Tokens
+   Ported from kb internal/server/ui.go */
+
+:root {
+  --bg:           #1a1410;
+  --bg-surface:   #221c16;
+  --bg-elevated:  #2c241c;
+  --border:       #3d3028;
+  --accent:       #d4a574;
+  --accent-dim:   #a07850;
+  --accent-glow:  rgba(212, 165, 116, 0.15);
+  --text:         #e8dcc8;
+  --text-muted:   #9e8e7a;
+  --text-faint:   #7a6e62;
+  --danger:       #c0705a;
+  --success:      #7ab87a;
+  --radius:       6px;
+  --panel-w:      380px;
+  --sidebar-w:    220px;
+  --header-h:     52px;
+  --statusbar-h:  28px;
+  --easing:       cubic-bezier(0.4, 0, 0.2, 1);
+  --font-sans:    "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                  system-ui, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:    "JetBrains Mono", "SF Mono", "Fira Code", Consolas,
+                  "Courier New", monospace;
+  --shadow-sm:    0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md:    0 10px 28px rgba(0, 0, 0, 0.35);
+  --shadow-lg:    0 20px 60px rgba(0, 0, 0, 0.45);
+
+  color-scheme: dark;
+}
+
+:root.light {
+  --bg:           #f5f0eb;
+  --bg-surface:   #ffffff;
+  --bg-elevated:  #ede6de;
+  --border:       #d4c9ba;
+  --accent:       #a06830;
+  --accent-dim:   #7a4e20;
+  --accent-glow:  rgba(160, 104, 48, 0.10);
+  --text:         #2c241c;
+  --text-muted:   #6e6050;
+  --text-faint:   #786e60;
+  --danger:       #c0504a;
+  --success:      #4a8a4a;
+
+  color-scheme: light;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+::selection {
+  background: var(--accent-glow);
+  color: var(--accent);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+.hidden {
+  display: none !important;
+}
