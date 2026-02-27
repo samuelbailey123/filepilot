@@ -1,3 +1,4 @@
+// FilePilot is a fast, native file explorer for macOS.
 package main
 
 import (
@@ -23,7 +24,7 @@ func main() {
 	app := NewApp()
 
 	err := wails.Run(&options.App{
-		Title:     "Decima Explorer",
+		Title:     "FilePilot",
 		Width:     1400,
 		Height:    900,
 		MinWidth:  800,
@@ -31,7 +32,7 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		// kb dark theme background (#1a1410).
+		// Dark theme background (#1a1410).
 		BackgroundColour: &options.RGBA{R: 26, G: 20, B: 16, A: 255},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
@@ -49,7 +50,7 @@ func main() {
 			},
 			Appearance: mac.NSAppearanceNameDarkAqua,
 			About: &mac.AboutInfo{
-				Title:   fmt.Sprintf("Decima Explorer %s", version),
+				Title:   fmt.Sprintf("FilePilot %s", version),
 				Message: fmt.Sprintf("Build: %s (%s)", commit, date),
 			},
 		},
