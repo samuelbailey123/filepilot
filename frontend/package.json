@@ -1,13 +1,24 @@
 {
-  "name": "frontend",
+  "name": "filepilot",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.7.0",
+  "description": "A fast, native file explorer for macOS with column, list, grid, and graph views.",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "author": "Samuel Bailey",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samuelbailey123/filepilot"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "vite": "^3.0.7"
+    "jsdom": "^28.1.0",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   }
 }
