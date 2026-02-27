@@ -1,3 +1,4 @@
+// Package fileops provides file operations with undo support, disk usage, and trash management.
 package fileops
 
 import (
@@ -123,8 +124,9 @@ func (o *Ops) Undo() (*UndoEntry, error) {
 			return &entry, fmt.Errorf("undo copy: %w", err)
 		}
 	case OpDelete:
-		// Trash undo is handled via trash.go RestoreFromTrash.
-		return &entry, fmt.Errorf("use RestoreFromTrash for delete undo")
+		if err := o.RestoreFromTrash(entry.From); err != nil {
+			return &entry, fmt.Errorf("undo delete: %w", err)
+		}
 	}
 
 	return &entry, nil
