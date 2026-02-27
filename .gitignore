@@ -7,4 +7,9 @@ frontend/dist
 *.db-shm
 .claude/
 .DS_Store
-/decima-explorer
+/filepilot
+.env
+.env.*
+.vscode/
+.idea/
+*.swp
