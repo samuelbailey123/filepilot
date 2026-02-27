@@ -1,10 +1,13 @@
 // Search Overlay — Cmd+/ triggered full-text search.
+// Supports global search and scoped search within current folder.
 
 import * as api from "../services/api.js";
-import { navigateTo, selectFile } from "../app.js";
+import { navigateTo, selectFile, getState } from "../app.js";
 
 let debounceTimer = null;
 let activeIndex = 0;
+let scopedMode = false;
+let searchMode = "smart"; // "smart" | "substring" | "regex" | "content"
 
 export function initSearch() {
   var overlay = document.getElementById("search-overlay");
@@ -14,13 +17,78 @@ export function initSearch() {
       '<div class="search-input-wrap">' +
         '<span class="search-input-icon">\uD83D\uDD0D</span>' +
         '<input class="search-input" type="text" placeholder="Search files..." autocomplete="off" spellcheck="false">' +
+        '<button class="search-mode-btn" title="Search mode" aria-label="Search mode">Smart</button>' +
+        '<button class="search-scope-btn" title="Toggle search scope" aria-label="Toggle search scope">' +
+          'All' +
+        '</button>' +
       "</div>" +
-      '<div class="search-hint">Type to search \u2022 \u2191\u2193 navigate \u2022 Enter to open \u2022 Esc to close</div>' +
+      '<div class="search-hint">Type to search \u2022 \u2191\u2193 navigate \u2022 Enter to open \u2022 Esc to close \u2022 Tab scope \u2022 Cmd+M mode</div>' +
       '<div class="search-results"></div>' +
     "</div>";
 
   var input = overlay.querySelector(".search-input");
   var resultsEl = overlay.querySelector(".search-results");
+  var scopeBtn = overlay.querySelector(".search-scope-btn");
+  var modeBtn = overlay.querySelector(".search-mode-btn");
+
+  // Update search mode button.
+  function updateModeBtn() {
+    var labels = { smart: "Smart", substring: "Substr", regex: "Regex", content: "Content" };
+    modeBtn.textContent = labels[searchMode] || "Smart";
+    modeBtn.classList.toggle("active", searchMode !== "smart");
+  }
+
+  function cycleSearchMode() {
+    var modes = ["smart", "substring", "regex", "content"];
+    var idx = modes.indexOf(searchMode);
+    searchMode = modes[(idx + 1) % modes.length];
+    updateModeBtn();
+    var query = input.value.trim();
+    if (query.length >= 2) {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      performSearch(query, resultsEl);
+    }
+  }
+
+  modeBtn.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    cycleSearchMode();
+  });
+  updateModeBtn();
+
+  // Update scope button text.
+  function updateScopeBtn() {
+    if (searchMode === "content") {
+      var state = getState();
+      var folderName = basename(state.currentPath || "");
+      scopeBtn.textContent = folderName || "/";
+      scopeBtn.classList.add("active");
+      input.placeholder = "Search file contents in " + folderName + "...";
+    } else if (scopedMode) {
+      var state = getState();
+      var folderName = basename(state.currentPath || "");
+      scopeBtn.textContent = folderName || "/";
+      scopeBtn.classList.add("active");
+      input.placeholder = "Search in " + folderName + "...";
+    } else {
+      scopeBtn.textContent = "All";
+      scopeBtn.classList.remove("active");
+      input.placeholder = "Search files...";
+    }
+  }
+
+  // Toggle scope on button click.
+  scopeBtn.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    scopedMode = !scopedMode;
+    updateScopeBtn();
+    // Re-search with current query.
+    var query = input.value.trim();
+    if (query.length >= 2) {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      performSearch(query, resultsEl);
+    }
+  });
 
   // Input handler with debounce.
   input.addEventListener("input", function () {
@@ -55,6 +123,17 @@ export function initSearch() {
     } else if (ev.key === "Escape") {
       ev.preventDefault();
       closeSearch();
+    } else if (ev.key === "Tab") {
+      ev.preventDefault();
+      scopedMode = !scopedMode;
+      updateScopeBtn();
+      var query = input.value.trim();
+      if (query.length >= 2) {
+        performSearch(query, resultsEl);
+      }
+    } else if (ev.key === "m" && (ev.metaKey || ev.ctrlKey)) {
+      ev.preventDefault();
+      cycleSearchMode();
     }
   });
 
@@ -66,13 +145,65 @@ export function initSearch() {
   });
 }
 
+/**
+ * Open the search overlay. Called externally from app.js.
+ * @param {boolean} scoped - If true, start in scoped mode.
+ */
+export function openSearch(scoped) {
+  scopedMode = !!scoped;
+  var overlay = document.getElementById("search-overlay");
+  overlay.classList.add("visible");
+  overlay.setAttribute("aria-hidden", "false");
+  var input = overlay.querySelector(".search-input");
+  var scopeBtn = overlay.querySelector(".search-scope-btn");
+
+  if (scopeBtn) {
+    if (scopedMode) {
+      var state = getState();
+      var folderName = basename(state.currentPath || "");
+      scopeBtn.textContent = folderName || "/";
+      scopeBtn.classList.add("active");
+      input.placeholder = "Search in " + folderName + "...";
+    } else {
+      scopeBtn.textContent = "All";
+      scopeBtn.classList.remove("active");
+      input.placeholder = "Search files...";
+    }
+  }
+
+  if (input) input.focus();
+}
+
 async function performSearch(query, resultsEl) {
   try {
-    var results = await api.search(query, 30);
+    var results;
+    var state = getState();
+    if (searchMode === "content") {
+      // Content search always uses current directory as scope.
+      var dirPath = state.currentPath;
+      results = await api.grepInDir(query, dirPath, 30);
+    } else if (searchMode === "substring") {
+      results = scopedMode
+        ? await api.substringSearchInDir(query, state.currentPath, 30)
+        : await api.substringSearch(query, 30);
+    } else if (searchMode === "regex") {
+      results = scopedMode
+        ? await api.regexSearchInDir(query, state.currentPath, 30)
+        : await api.regexSearch(query, 30);
+    } else {
+      results = scopedMode
+        ? await api.searchInDir(query, state.currentPath, 30)
+        : await api.search(query, 30);
+    }
     activeIndex = 0;
     renderResults(results || [], query, resultsEl);
   } catch (err) {
-    resultsEl.innerHTML = '<div class="search-result"><div class="result-title">Search error</div></div>';
+    var errMsg = String(err);
+    if (searchMode === "regex" && errMsg.includes("invalid regex")) {
+      resultsEl.innerHTML = '<div class="search-result"><div class="result-title">Invalid regex pattern</div></div>';
+    } else {
+      resultsEl.innerHTML = '<div class="search-result"><div class="result-title">Search error</div></div>';
+    }
   }
 }
 
@@ -172,6 +303,12 @@ function formatRelTime(unix) {
   if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
   if (diff < 604800) return Math.floor(diff / 86400) + "d ago";
   return new Date(unix * 1000).toLocaleDateString();
+}
+
+function basename(path) {
+  if (!path) return "";
+  var parts = path.split("/");
+  return parts[parts.length - 1] || "/";
 }
 
 function escapeHtml(str) {

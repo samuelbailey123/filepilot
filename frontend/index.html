@@ -3,58 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Decima Explorer</title>
+  <title>FilePilot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 <body>
-  <div id="app">
+  <!-- Skip navigation for keyboard users -->
+  <a href="#browser" class="skip-link">Skip to file browser</a>
+
+  <div id="app" role="application" aria-label="FilePilot file manager">
     <!-- Titlebar drag region (macOS) -->
-    <div id="titlebar"></div>
+    <div id="titlebar" role="presentation"></div>
 
     <div id="main-layout">
       <!-- Sidebar -->
-      <aside id="sidebar"></aside>
+      <nav id="sidebar" role="navigation" aria-label="Favorites and locations"></nav>
 
       <!-- Main content area -->
-      <main id="content">
+      <main id="content" role="main" aria-label="File browser">
         <!-- Toolbar -->
-        <div id="toolbar">
-          <div id="breadcrumb"></div>
+        <div id="toolbar" role="toolbar" aria-label="Navigation and view controls">
+          <div id="nav-buttons">
+            <button id="nav-back" class="nav-btn" disabled aria-label="Back" title="Back">&lsaquo;</button>
+            <button id="nav-forward" class="nav-btn" disabled aria-label="Forward" title="Forward">&rsaquo;</button>
+          </div>
+          <nav id="breadcrumb" aria-label="Directory path"></nav>
           <div id="toolbar-actions">
-            <div id="view-switcher"></div>
-            <div id="filter-pills"></div>
+            <div id="view-switcher" role="radiogroup" aria-label="View mode"></div>
+            <div id="filter-pills" role="group" aria-label="File type filters"></div>
+            <button id="theme-toggle" class="toolbar-icon-btn" aria-label="Toggle dark/light theme" title="Toggle theme">
+              <span class="theme-icon-dark">&#9790;</span>
+              <span class="theme-icon-light">&#9728;</span>
+            </button>
           </div>
         </div>
 
         <!-- File browser area -->
-        <div id="browser"></div>
+        <div id="browser" role="region" aria-label="File listing" tabindex="-1"></div>
 
         <!-- Status bar -->
-        <div id="statusbar"></div>
+        <div id="statusbar" role="status" aria-live="polite"></div>
       </main>
 
       <!-- Preview panel -->
-      <aside id="preview-panel"></aside>
+      <aside id="preview-panel" role="complementary" aria-label="File preview"></aside>
     </div>
 
     <!-- Search overlay -->
-    <div id="search-overlay" aria-hidden="true"></div>
+    <div id="search-overlay" role="dialog" aria-label="Search files" aria-hidden="true" aria-modal="true"></div>
 
     <!-- Context menu -->
-    <div id="context-menu" class="hidden"></div>
+    <div id="context-menu" class="hidden" role="menu" aria-label="File actions"></div>
 
     <!-- Shortcuts overlay -->
-    <div id="shortcuts-overlay" aria-hidden="true"></div>
+    <div id="shortcuts-overlay" role="dialog" aria-label="Keyboard shortcuts" aria-hidden="true" aria-modal="true"></div>
+
+    <!-- Quick Look overlay -->
+    <div id="quicklook-overlay" role="dialog" aria-label="Quick Look preview" aria-hidden="true" aria-modal="true"></div>
+
+    <!-- Settings overlay -->
+    <div id="settings-overlay" role="dialog" aria-label="Settings" aria-hidden="true" aria-modal="true"></div>
+
+    <!-- Rename dialog overlay -->
+    <div id="rename-dialog-overlay" role="dialog" aria-label="Batch rename" aria-hidden="true" aria-modal="true"></div>
+
+    <!-- Connection dialog overlay -->
+    <div id="connection-dialog-overlay" role="dialog" aria-label="Network connection" aria-hidden="true" aria-modal="true"></div>
+
+    <!-- Modal dialog container -->
+    <div id="modal-overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title"></div>
 
     <!-- Scan progress toast -->
-    <div id="scan-toast" class="hidden"></div>
+    <div id="scan-toast" class="hidden" role="status" aria-live="polite"></div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <!-- Live region for screen reader announcements -->
+  <div id="live-region" aria-live="polite" aria-atomic="true"></div>
+
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>
