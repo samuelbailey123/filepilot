@@ -1,13 +1,19 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "decima-explorer",
-  "outputfilename": "decima-explorer",
+  "name": "filepilot",
+  "outputfilename": "filepilot",
   "frontend:install": "npm install",
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "Samuel Bailey",
-    "email": "baileysam1997@gmail.com"
+    "name": "Samuel Bailey"
+  },
+  "info": {
+    "companyName": "Samuel Bailey",
+    "productName": "FilePilot",
+    "productVersion": "0.7.0",
+    "copyright": "Copyright 2026 Samuel Bailey",
+    "comments": "A fast, native file explorer for macOS"
   }
 }

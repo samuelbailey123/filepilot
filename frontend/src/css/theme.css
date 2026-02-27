@@ -1,7 +1,7 @@
-/* Decima Explorer — Design Tokens
-   Ported from kb internal/server/ui.go */
+/* FilePilot — Design Tokens */
 
 :root {
+  /* Core palette */
   --bg:           #1a1410;
   --bg-surface:   #221c16;
   --bg-elevated:  #2c241c;
@@ -12,25 +12,65 @@
   --text:         #e8dcc8;
   --text-muted:   #9e8e7a;
   --text-faint:   #7a6e62;
-  --danger:       #c0705a;
-  --success:      #7ab87a;
+
+  /* Semantic colors */
+  --danger:       #e06050;
+  --danger-dim:   #c04838;
+  --danger-glow:  rgba(224, 96, 80, 0.12);
+  --success:      #6cc070;
+  --success-dim:  #4a9e50;
+  --success-glow: rgba(108, 192, 112, 0.12);
+  --warning:      #e8b840;
+  --warning-dim:  #c09830;
+  --warning-glow: rgba(232, 184, 64, 0.12);
+  --info:         #60a8e0;
+  --info-dim:     #4888c0;
+  --info-glow:    rgba(96, 168, 224, 0.12);
+
+  /* File type colors */
+  --color-code:       #60a8e0;
+  --color-code-bg:    rgba(96, 168, 224, 0.10);
+  --color-data:       #c080e0;
+  --color-data-bg:    rgba(192, 128, 224, 0.10);
+  --color-doc:        #6cc070;
+  --color-doc-bg:     rgba(108, 192, 112, 0.10);
+  --color-media:      #e08060;
+  --color-media-bg:   rgba(224, 128, 96, 0.10);
+  --color-config:     #e8b840;
+  --color-config-bg:  rgba(232, 184, 64, 0.10);
+  --color-archive:    #9e8e7a;
+  --color-archive-bg: rgba(158, 142, 122, 0.10);
+  --color-folder:     #d4a574;
+  --color-folder-bg:  rgba(212, 165, 116, 0.10);
+
+  /* Spacing & layout */
   --radius:       6px;
+  --radius-lg:    10px;
   --panel-w:      380px;
   --sidebar-w:    220px;
   --header-h:     52px;
   --statusbar-h:  28px;
   --easing:       cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Typography */
   --font-sans:    "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI",
                   system-ui, "Helvetica Neue", Arial, sans-serif;
   --font-mono:    "JetBrains Mono", "SF Mono", "Fira Code", Consolas,
                   "Courier New", monospace;
+
+  /* Shadows */
   --shadow-sm:    0 2px 8px rgba(0, 0, 0, 0.25);
   --shadow-md:    0 10px 28px rgba(0, 0, 0, 0.35);
   --shadow-lg:    0 20px 60px rgba(0, 0, 0, 0.45);
 
+  /* Focus ring for accessibility */
+  --focus-ring:   0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  --focus-ring-inset: inset 0 0 0 2px var(--accent);
+
   color-scheme: dark;
 }
 
+/* --- Light Mode --- */
 :root.light {
   --bg:           #f5f0eb;
   --bg-surface:   #ffffff;
@@ -41,13 +81,46 @@
   --accent-glow:  rgba(160, 104, 48, 0.10);
   --text:         #2c241c;
   --text-muted:   #6e6050;
-  --text-faint:   #786e60;
-  --danger:       #c0504a;
-  --success:      #4a8a4a;
+  --text-faint:   #8a7e70;
+
+  --danger:       #d04040;
+  --danger-dim:   #b03030;
+  --danger-glow:  rgba(208, 64, 64, 0.08);
+  --success:      #2e8040;
+  --success-dim:  #206830;
+  --success-glow: rgba(46, 128, 64, 0.08);
+  --warning:      #b08020;
+  --warning-dim:  #906818;
+  --warning-glow: rgba(176, 128, 32, 0.08);
+  --info:         #2868b0;
+  --info-dim:     #185090;
+  --info-glow:    rgba(40, 104, 176, 0.08);
+
+  --color-code:       #2868b0;
+  --color-code-bg:    rgba(40, 104, 176, 0.08);
+  --color-data:       #8040b0;
+  --color-data-bg:    rgba(128, 64, 176, 0.08);
+  --color-doc:        #2e8040;
+  --color-doc-bg:     rgba(46, 128, 64, 0.08);
+  --color-media:      #c06030;
+  --color-media-bg:   rgba(192, 96, 48, 0.08);
+  --color-config:     #9e7820;
+  --color-config-bg:  rgba(158, 120, 32, 0.08);
+  --color-archive:    #6e6050;
+  --color-archive-bg: rgba(110, 96, 80, 0.08);
+  --color-folder:     #a06830;
+  --color-folder-bg:  rgba(160, 104, 48, 0.08);
+
+  --shadow-sm:    0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md:    0 10px 28px rgba(0, 0, 0, 0.12);
+  --shadow-lg:    0 20px 60px rgba(0, 0, 0, 0.16);
+
+  --focus-ring:   0 0 0 2px var(--bg-surface), 0 0 0 4px var(--accent);
 
   color-scheme: light;
 }
 
+/* --- Base Reset --- */
 * {
   margin: 0;
   padding: 0;
@@ -64,7 +137,11 @@ html, body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  user-select: none;
+}
+
+/* Allow text selection in content areas */
+#preview-panel, .search-input, .rename-input, pre, code {
+  user-select: text;
 }
 
 ::selection {
@@ -72,6 +149,7 @@ html, body {
   color: var(--accent);
 }
 
+/* --- Scrollbars --- */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -90,6 +168,7 @@ html, body {
   background: var(--text-faint);
 }
 
+/* --- Links --- */
 a {
   color: var(--accent);
   text-decoration: none;
@@ -105,4 +184,69 @@ code, pre {
 
 .hidden {
   display: none !important;
+}
+
+/* --- Focus styles for accessibility --- */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius);
+}
+
+button:focus-visible, .icon-btn:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* Skip link for keyboard users */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: var(--radius);
+  font-weight: 600;
+  z-index: 9999;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Screen reader only --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Live region for announcements --- */
+#live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
