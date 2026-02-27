@@ -1,3 +1,4 @@
+// Package index maintains a SQLite-backed file index with FTS5 full-text search and background scanning.
 package index
 
 import (
@@ -13,18 +14,20 @@ import (
 
 // FileEntry represents a single file or directory in the index.
 type FileEntry struct {
-	ID         int64  `json:"id"`
-	Path       string `json:"path"`
-	Name       string `json:"name"`
-	ParentPath string `json:"parentPath"`
-	Extension  string `json:"extension"`
-	Size       int64  `json:"size"`
-	IsDir      bool   `json:"isDir"`
-	ModTime    int64  `json:"modTime"`
-	CreateTime int64  `json:"createTime"`
-	Permissions int   `json:"permissions"`
-	Hidden     bool   `json:"hidden"`
-	IndexedAt  int64  `json:"indexedAt"`
+	ID            int64  `json:"id"`
+	Path          string `json:"path"`
+	Name          string `json:"name"`
+	ParentPath    string `json:"parentPath"`
+	Extension     string `json:"extension"`
+	Size          int64  `json:"size"`
+	IsDir         bool   `json:"isDir"`
+	ModTime       int64  `json:"modTime"`
+	CreateTime    int64  `json:"createTime"`
+	Permissions   int    `json:"permissions"`
+	Hidden        bool   `json:"hidden"`
+	IndexedAt     int64  `json:"indexedAt"`
+	IsSymlink     bool   `json:"isSymlink"`
+	SymlinkTarget string `json:"symlinkTarget"`
 }
 
 // Favorite represents a user-bookmarked location.
@@ -115,6 +118,11 @@ func (idx *Index) migrate() error {
 	`
 	_, err := idx.db.Exec(schema)
 	return err
+}
+
+// DB returns the underlying database connection for shared use (e.g. search).
+func (idx *Index) DB() *sql.DB {
+	return idx.db
 }
 
 // Close closes the database connection.
