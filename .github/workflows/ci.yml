@@ -23,8 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup PATH
         run: |
+          echo "/opt/homebrew/bin" >> $GITHUB_PATH
           . "$NVM_DIR/nvm.sh"
           nvm use 22
           echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> $GITHUB_PATH
