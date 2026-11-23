@@ -16,19 +16,20 @@ permissions:
 jobs:
   go:
     name: Go (vet + test)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: self-hosted
-    env:
-      NVM_DIR: /Users/samuelbailey/.nvm
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup PATH
         run: |
-          echo "/opt/homebrew/bin" >> $GITHUB_PATH
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+          export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
           . "$NVM_DIR/nvm.sh"
           nvm use 22
-          echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> $GITHUB_PATH
+          echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> "$GITHUB_PATH"
 
       - name: Build frontend assets
         working-directory: frontend
@@ -43,9 +44,9 @@ jobs:
 
   frontend:
     name: Frontend (build + test)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: self-hosted
-    env:
-      NVM_DIR: /Users/samuelbailey/.nvm
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: frontend
@@ -55,9 +56,10 @@ jobs:
 
       - name: Setup Node
         run: |
+          export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
           . "$NVM_DIR/nvm.sh"
           nvm use 22
-          echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> $GITHUB_PATH
+          echo "$NVM_DIR/versions/node/$(nvm version)/bin" >> "$GITHUB_PATH"
 
       - name: Install dependencies
         run: npm ci
